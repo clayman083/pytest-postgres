@@ -5,7 +5,7 @@ setup(
     name='pytest-postgres',
     version='0.1.0',
     packages=find_packages(),
-    url='',
+    url='https://github.com/clayman74/pytest-postgres',
     licence='MIT',
     author='Kirill Sumorokov',
     author_email='sumorokov.k@gmail.com',
@@ -24,7 +24,7 @@ setup(
 
     entry_points={
         'pytest11': [
-            'docker = pytest_postgres.plugin'
+            'postgres = pytest_postgres.plugin'
         ]
     }
 )
