@@ -42,7 +42,7 @@ def pg_server(unused_port_factory, docker: DockerClient, request):
         pg_name = 'db-{}'.format(str(uuid.uuid4()))
 
     if pg_name:
-        for item in docker.containers():
+        for item in docker.containers(all=True):
             for name in item['Names']:
                 if pg_name in name:
                     container = item
@@ -60,7 +60,8 @@ def pg_server(unused_port_factory, docker: DockerClient, request):
             }),
             detach=True
         )
-        docker.start(container=container['Id'])
+
+    docker.start(container=container['Id'])
 
     inspection = docker.inspect_container(container['Id'])
     host = inspection['NetworkSettings']['IPAddress']
