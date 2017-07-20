@@ -28,6 +28,10 @@ To install pytest-postgres, do:
 Changelog
 ---------
 
+0.1.1 (2017-07-20)
+~~~~~~~~~~~~~~~~~~
+Repair [issue](https://github.com/clayman74/pytest-postgres/issues/2)
+
 0.1.0 (2016-09-15)
 ~~~~~~~~~~~~~~~~~~
 Initial release.
