@@ -1,18 +1,15 @@
 sudo: required
 
 language: python
-python: 3.5
+python:
+  - 3.6
 
 services:
   - docker
 
-env:
-  - TOX_ENV=py35
-
 install:
-  - pip install tox
+  - pip install tox '.[develop]'
 
-script: tox -e $TOX_ENV
-
-after_success:
-  - pip install coveralls && cd tests && coveralls
+script:
+  - make lint
+  - make test-all
