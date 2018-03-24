@@ -1,0 +1,9 @@
+[run]
+branch = True
+source = pytest_postgres
+
+[html]
+directory = tests/coverage
+
+[xml]
+output = tests/coverage.xml
