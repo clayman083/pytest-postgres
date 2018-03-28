@@ -1,12 +1,9 @@
-import logging
 import time
 import uuid
 
 import docker as docker_client
 import psycopg2
 import pytest
-
-log = logging.getLogger(__name__)
 
 
 def pytest_addoption(parser):
@@ -83,8 +80,6 @@ def pg_server(docker, request):
         check_connection(pg_params)
         yield {'network': container.attrs['NetworkSettings'],
                'params': pg_params}
-    except Exception as ex:
-        log.error(str(ex))
     finally:
         if not pg_reuse:
             container.kill()
