@@ -1,6 +1,6 @@
+import logging
 import time
 import uuid
-import logging
 
 import docker as docker_client
 import psycopg2
