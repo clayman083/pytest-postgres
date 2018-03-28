@@ -1,9 +1,12 @@
 import time
 import uuid
+import logging
 
 import docker as docker_client
 import psycopg2
 import pytest
+
+log = logging.getLogger(__name__)
 
 
 def pytest_addoption(parser):
@@ -45,7 +48,6 @@ def pg_server(docker, request):
     pg_local = request.config.getoption('--pg-local')
 
     container = None
-    port = None
     if not pg_name:
         pg_name = 'db-{}'.format(str(uuid.uuid4()))
 
@@ -77,10 +79,13 @@ def pg_server(docker, request):
     pg_params = {'database': 'postgres', 'user': 'postgres',
                  'password': 'postgres', 'host': host, 'port': port}
 
-    check_connection(pg_params)
-
-    yield {'network': container.attrs['NetworkSettings'], 'params': pg_params}
-
-    if not pg_reuse:
-        container.kill()
-        container.remove()
+    try:
+        check_connection(pg_params)
+        yield {'network': container.attrs['NetworkSettings'],
+               'params': pg_params}
+    except Exception as ex:
+        log.error(str(ex))
+    finally:
+        if not pg_reuse:
+            container.kill()
+            container.remove()
