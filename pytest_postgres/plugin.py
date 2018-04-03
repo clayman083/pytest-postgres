@@ -45,7 +45,6 @@ def pg_server(docker, request):
     pg_local = request.config.getoption('--pg-local')
 
     container = None
-    port = None
     if not pg_name:
         pg_name = 'db-{}'.format(str(uuid.uuid4()))
 
@@ -77,10 +76,11 @@ def pg_server(docker, request):
     pg_params = {'database': 'postgres', 'user': 'postgres',
                  'password': 'postgres', 'host': host, 'port': port}
 
-    check_connection(pg_params)
-
-    yield {'network': container.attrs['NetworkSettings'], 'params': pg_params}
-
-    if not pg_reuse:
-        container.kill()
-        container.remove()
+    try:
+        check_connection(pg_params)
+        yield {'network': container.attrs['NetworkSettings'],
+               'params': pg_params}
+    finally:
+        if not pg_reuse:
+            container.kill()
+            container.remove()
