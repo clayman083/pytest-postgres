@@ -19,7 +19,7 @@ setup(
     keywords='pytest-postgres',
 
     install_requires=[
-        'docker==2.5.1',
+        'docker',
         'psycopg2',
         'pytest',
     ],
