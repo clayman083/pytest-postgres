@@ -48,4 +48,4 @@ jobs:
       if: tag IS present
       script:
         - pip install twine
-        - make dist
+        - make release
