@@ -1,15 +1,29 @@
-sudo: required
-
+---
 language: python
 python:
-  - 3.6
+  - "3.6"
+
+sudo: required
 
 services:
   - docker
 
-install:
-  - pip install tox '.[develop]'
+addons:
+  apt:
+    packages:
+    - python-pip
 
-script:
-  - make lint
-  - make test-all
+jobs:
+  include:
+    - stage: "test"
+      name: "Test"
+      script:
+        - pip install tox
+        - tox -- --pg-image=postgres:alpine tests
+    
+    - stage: "publish"
+      name: "Publish"
+      if: tag IS present
+      script:
+        - pip install twine
+        - make dist
