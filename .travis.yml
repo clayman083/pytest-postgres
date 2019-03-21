@@ -1,28 +1,50 @@
 ---
-language: python
-python:
-  - "3.6"
+
+dist: xenial
+cache:
+  directories:
+    - $HOME/.cache/pip
 
 sudo: required
 
 services:
   - docker
 
-addons:
-  apt:
-    packages:
-    - python-pip
+language: python
+
+install:
+  - pip install --upgrade tox
 
 jobs:
   include:
-    - stage: "test"
-      name: "Test"
+    - stage: lint
+      python: 3.7
+      env:
+        - TOXENV=lint
       script:
-        - pip install tox
-        - tox -- --pg-image=postgres:alpine tests
-    
-    - stage: "publish"
-      name: "Publish"
+        - tox
+
+    - stage: test
+      python: 3.5
+      env:
+        - TOXENV=py35
+      script:
+        - tox
+    - stage: test
+      python: 3.6
+      env:
+        - TOXENV=py36
+      script:
+        - tox
+    - stage: test
+      python: 3.7
+      env:
+        - TOXENV=py37
+      script:
+        - tox
+
+    - stage: publish
+      python: 3.7
       if: tag IS present
       script:
         - pip install twine
