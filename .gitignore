@@ -48,4 +48,14 @@ coverage.xml
 *,cover
 .hypothesis/
 
+# Mr Developer
+.cache
+.env
+.idea
+.mypy_cache
+.project
+.pydevproject
 .pytest_cache
+.scannerwork
+.vscode
+venv
