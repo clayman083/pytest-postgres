@@ -24,7 +24,7 @@ setup(
 
     install_requires=[
         'docker',
-        'psycopg2',
+        'psycopg2-binary',
         'pytest',
     ],
 
