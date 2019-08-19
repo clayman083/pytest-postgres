@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 setup(
     name='pytest-postgres',
-    version='0.6.0',
+    version='0.6.1',
     packages=find_packages(),
     url='https://github.com/clayman74/pytest-postgres',
     licence='MIT',
