@@ -26,6 +26,9 @@ def pytest_addoption(parser):
                      help='Specify PostgreSQL server user password')
     parser.addoption('--pg-database', action='store', default='postgres',
                      help='Specify test database name')
+    parser.addoption('--pg-env', action='append', default=[],
+                     help='Specify environment values to pass to database container. '
+                          'This option my be specified multiple times.')
 
 
 @pytest.fixture(scope='session')
@@ -48,7 +51,7 @@ def check_connection(params):
         pytest.fail('Could not connect to PostgreSQL server')
 
 
-def create_container(docker, image, name, ports, network=None):
+def create_container(docker, image, name, ports, network=None, env=None):
     container = None
 
     if name:
@@ -63,7 +66,8 @@ def create_container(docker, image, name, ports, network=None):
         except APIError:
             pass
 
-        container_params = {'image': image, 'name': name, 'detach': True}
+        container_params = {'image': image, 'name': name, 'detach': True,
+                            'environment': env}
 
         if network:
             container_params['network'] = network
@@ -90,6 +94,7 @@ def pg_server(docker, request):
     pg_image = request.config.getoption('--pg-image')
     pg_reuse = request.config.getoption('--pg-reuse')
     pg_network = request.config.getoption('--pg-network')
+    pg_env = request.config.getoption('--pg-env')
 
     network = None
     container = None
@@ -100,7 +105,9 @@ def pg_server(docker, request):
 
         container = create_container(docker, pg_image, pg_name,
                                      ports={'5432/tcp': None},
-                                     network=pg_network)
+                                     network=pg_network,
+                                     env=pg_env,
+                                     )
         container.start()
         container.reload()
 
