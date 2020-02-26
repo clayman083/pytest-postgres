@@ -27,7 +27,8 @@ def pytest_addoption(parser):
     parser.addoption('--pg-database', action='store', default='postgres',
                      help='Specify test database name')
     parser.addoption('--pg-env', action='append', default=[],
-                     help='Specify environment values to pass to database container. '
+                     help='Specify environment values to pass to database '
+                          'container. '
                           'This option my be specified multiple times.')
 
 
@@ -94,7 +95,16 @@ def pg_server(docker, request):
     pg_image = request.config.getoption('--pg-image')
     pg_reuse = request.config.getoption('--pg-reuse')
     pg_network = request.config.getoption('--pg-network')
-    pg_env = request.config.getoption('--pg-env')
+
+    # Convert list of env values to a dict.
+    pg_env = {}
+    for env in request.config.getoption('--pg-env'):
+        name, value = env.split("=", maxsplit=1)
+        pg_env[name] = value
+
+    # Add POSTGRES_HOST_AUTH_METHOD=trust is needed.
+    if "POSTGRES_HOST_AUTH_METHOD" not in pg_env:
+        pg_env["POSTGRES_HOST_AUTH_METHOD"] = "trust"
 
     network = None
     container = None
