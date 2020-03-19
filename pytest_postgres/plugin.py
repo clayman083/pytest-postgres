@@ -1,3 +1,4 @@
+import logging
 import time
 import uuid
 
@@ -5,6 +6,8 @@ import docker as docker_client
 import psycopg2
 import pytest
 from docker.errors import APIError, ImageNotFound
+
+log = logging.getLogger(__name__)
 
 
 def pytest_addoption(parser):
@@ -26,6 +29,18 @@ def pytest_addoption(parser):
                      help='Specify PostgreSQL server user password')
     parser.addoption('--pg-database', action='store', default='postgres',
                      help='Specify test database name')
+
+
+class catch_docker_error:
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        # Catch and handle docker APIError:
+        if exc_type is APIError:
+            log.exception(exc_value)
+            return True
 
 
 @pytest.fixture(scope='session')
@@ -58,10 +73,8 @@ def create_container(docker, image, name, ports, network=None):
                 break
 
     if not container:
-        try:
+        with catch_docker_error():
             docker.images.pull(image)
-        except APIError:
-            pass
 
         container_params = {'image': image, 'name': name, 'detach': True}
 
@@ -130,5 +143,7 @@ def pg_server(docker, request):
         }
     finally:
         if not pg_reuse and container:
-            container.kill()
-            container.remove()
+            with catch_docker_error():
+                container.kill()
+            with catch_docker_error():
+                container.remove()
