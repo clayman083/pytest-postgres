@@ -17,6 +17,7 @@ setup(
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Topic :: Software Development :: Testing",
         "Framework :: Pytest"
     ],
@@ -30,13 +31,13 @@ setup(
 
     extras_require={
         'develop': [
-            'flake8==3.5.0',
-            'flake8-bugbear==17.12.0',
-            'flake8-builtins-unleashed==1.3.1',
-            'flake8-comprehensions==1.4.1',
-            'flake8-import-order==0.16',
-            'flake8-mypy==17.8.0',
-            'flake8-pytest==1.3'
+            'flake8',
+            'flake8-bugbear',
+            'flake8-builtins-unleashed',
+            'flake8-comprehensions',
+            'flake8-import-order',
+            'flake8-mypy',
+            'flake8-pytest'
         ],
         'test': [
             'pytest',
