@@ -50,7 +50,7 @@ def docker():
 
 def check_connection(params):
     delay = 0.01
-    for _ in range(20):
+    for _ in range(10):
         try:
             with psycopg2.connect(**params) as conn:
                 with conn.cursor() as cursor:
