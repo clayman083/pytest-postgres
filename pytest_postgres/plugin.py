@@ -48,8 +48,9 @@ def check_connection(params):
         pytest.fail('Could not connect to PostgreSQL server')
 
 
-def create_container(docker, image, name, ports, network=None):
+def create_container(docker, image, name, ports, network=None, env_params=None):
     container = None
+    env_params = env_params or {}
 
     if name:
         for item in docker.containers.list(all=True):
@@ -63,7 +64,12 @@ def create_container(docker, image, name, ports, network=None):
         except APIError:
             pass
 
-        container_params = {'image': image, 'name': name, 'detach': True}
+        container_params = {
+            'image': image,
+            'name': name,
+            'detach': True,
+            'environment': env_params,
+        }
 
         if network:
             container_params['network'] = network
@@ -98,9 +104,16 @@ def pg_server(docker, request):
         if not pg_name:
             pg_name = 'db-{}'.format(str(uuid.uuid4()))
 
+        env_params = {
+            'POSTGRES_USER': pg_user,
+            'POSTGRES_DB': pg_database,
+            'POSTGRES_PASSWORD': pg_password,
+        }
+
         container = create_container(docker, pg_image, pg_name,
                                      ports={'5432/tcp': None},
-                                     network=pg_network)
+                                     network=pg_network,
+                                     env_params=env_params)
         container.start()
         container.reload()
 
